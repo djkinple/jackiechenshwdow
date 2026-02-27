@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《捕風捉影》3/27 龍入狼群 - 終極交易</title>
+    <style>
+        /* 整體背景設定 (用海報當模糊底圖) */
+        body {
+            font-family: 'Microsoft JhengHei', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            text-align: center;
+            background-image: url('poster.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-color: #111; 
+        }
+        
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.85); /* 遮罩加深，讓前景海報與文字更跳 */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 實體海報圖片設定 */
+        .poster-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+            margin-bottom: 20px;
+        }
+        /* 首頁海報尺寸 */
+        .poster-front { max-height: 350px; }
+        /* 截圖頁海報尺寸 (稍微縮小以免畫面太長) */
+        .poster-back { max-height: 250px; margin-top: 10px; }
+
+        h1 { color: #f39c12; margin-bottom: 5px; text-shadow: 2px 2px 5px #000; font-size: 28px; }
+        p.subtitle { color: #ccc; margin-bottom: 20px; font-size: 16px; line-height: 1.5; }
+        .highlight-text { color: #e74c3c; font-weight: bold; font-size: 20px; }
+        
+        /* 關卡頁面切換 */
+        .page { display: none; width: 100%; max-width: 600px; animation: fadeIn 0.5s; }
+        .page.active { display: block; }
+
+        /* 門的容器 */
+        .doors-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        /* 門的設計 */
+        .door {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #2c3e50, #000000);
+            border: 2px solid #f39c12;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+        .door:hover { transform: scale(1.05); background: #34495e; }
+        .door.disabled { pointer-events: none; opacity: 0.8; }
+        .door.opened { background: #fff; transform: rotateY(180deg); }
+        .door .door-content { transition: transform 0.3s; }
+        .door.opened .door-content { transform: rotateY(180deg); font-size: 45px; }
+
+        /* 按鈕設計 */
+        .btn {
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .btn-ig:hover { transform: scale(1.05); }
+        .btn-start { background-color: #2ecc71; color: #111; }
+        .btn-start:hover { background-color: #27ae60; transform: scale(1.05); }
+        .btn-locked { background-color: #555; color: #999; cursor: not-allowed; }
+        .btn-normal { background-color: #3498db; }
+        .btn-normal:hover { background-color: #2980b9; }
+
+        /* 輸入框設計 */
+        input[type="text"] {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #f39c12;
+            text-align: center;
+            width: 80%;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.9);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 最終截圖區塊 */
+        .final-screenshot-area {
+            background: rgba(0, 0, 0, 0.85);
+            border: 3px dashed #f39c12;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+        .final-screenshot-area h2 { color: #2ecc71; margin: 0 0 10px 0; }
+        .warning-text { color: #e74c3c; font-size: 14px; font-weight: bold; margin-bottom: 20px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        
+        <!-- 【最前面】第 0 關：強制追蹤與海報展示頁 -->
+        <div id="intro-page" class="page active">
+            <!-- 這裡會顯示最前面的海報 -->
+            <img src="poster.jpg" alt="3/27 龍入狼群 海報" class="poster-img poster-front">
+            
+            <h1>《捕風捉影》終極交易</h1>
+            <p class="highlight-text">3/27 龍入狼群 IMAX 特映</p>
+            <p class="subtitle">想挑戰 Let's Make a Deal 抽門票？<br>你必須先完成「追蹤官方 IG」的任務！</p>
+            
+            <button class="btn btn-ig" onclick="goToIG()">👉 點我前往 IG 追蹤 @kinpletw</button>
+            <br><br>
+            <!-- 一開始是鎖定的按鈕 -->
+            <button id="unlock-btn" class="btn btn-locked" disabled onclick="startGame()">⛔ 請先點擊上方按鈕追蹤</button>
+        </div>
+
+        <!-- 第一關 (10選1，5個中獎) -->
+        <div id="level1-page" class="page">
+            <h1>第一關：真假難辨</h1>
+            <p class="subtitle">這裡有 10 扇門，只有 5 扇能通往下一關 (1/2 機率)</p>
+            <div class="doors-container" id="level1-doors"></div>
+        </div>
+
+        <!-- 第二關 (5選1，1個中獎) -->
+        <div id="level2-page" class="page">
+            <h1>第二關：終極交易</h1>
+            <p class="subtitle">太棒了！你來到了最後一關。<br>這裡有 5 扇門，只有 1 扇藏著 IMAX 特映會門票！</p>
+            <div class="doors-container" id="level2-doors"></div>
+        </div>
+
+        <!-- 失敗頁面 (一陣風/一道影) -->
+        <div id="fail-page" class="page">
+            <h1 id="fail-title" style="color: #e74c3c; font-size: 40px;"></h1>
+            <p class="subtitle" id="fail-desc" style="font-size: 20px;"></p>
+            <p>很遺憾，交易失敗，請退回第一關重新開始！</p>
+            <button class="btn btn-normal" onclick="resetToLevel1()">返回第一關 (重頭開始)</button>
+        </div>
+
+        <!-- 成功頁面 (輸入暱稱與IG) -->
+        <div id="success-page" class="page">
+            <h1 style="color: #2ecc71;">🎉 挑戰成功！🎉</h1>
+            <p class="subtitle">你成功捕獲了【3/27 龍入狼群】IMAX 特映會的機會！<br>請留下資料生成抽獎憑證。</p>
+            
+            <p class="warning-text">⚠️ 警告：小編抽獎時會嚴格核對 IG 是否有追蹤喔！</p>
+            <input type="text" id="ig-input" placeholder="請輸入你的 IG 帳號 (核對用)" maxlength="30">
+            <input type="text" id="nickname-input" placeholder="請輸入你在 FB 留言的暱稱" maxlength="15">
+            <br>
+            <button class="btn btn-start" onclick="generateCertificate()">產生截圖憑證</button>
+        </div>
+
+        <!-- 【最後面】最終截圖憑證頁面 -->
+        <div id="final-page" class="page">
+            <div class="final-screenshot-area">
+                <h2>🎫 IMAX 交易憑證 🎫</h2>
+                
+                <!-- 這裡會顯示最後面的縮小版海報 -->
+                <img src="poster.jpg" alt="3/27 龍入狼群 海報" class="poster-img poster-back">
+
+                <h3 style="color: #f1c40f; margin: 10px 0;">玩家：<span id="display-name"></span></h3>
+                <p style="margin: 5px 0; font-size: 15px;">已成功通過 Let's Make a Deal 終極挑戰！</p>
+                <p style="font-size: 18px; color: #e74c3c; font-weight:bold; margin: 10px 0;">🔥 3/27 龍入狼群 🔥</p>
+                
+                <p style="font-size: 14px; color: #ccc; margin: 5px 0;">IG 帳號核對：<span id="display-ig" style="color:#fff;"></span></p>
+                <p style="font-size: 14px; color: #e1306c; font-weight:bold; margin-top:10px;">@kinpletw《捕風捉影》</p>
+            </div>
+            <p style="margin-top: 15px; color: #f39c12; font-weight: bold;">
+                📸 請【截圖】此畫面！<br>
+                並前往我們的 FB 粉絲專頁貼文留言區貼上圖片<br>
+                即可參加真正的電影贈票抽獎！
+            </p>
+        </div>
+
+    </div>
+
+    <script>
+        // 幫助函數：陣列洗牌
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 切換頁面邏輯
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // 點擊前往 IG，並解鎖開始按鈕
+        function goToIG() {
+            window.open('https://www.instagram.com/kinpletw/', '_blank');
+            
+            const unlockBtn = document.getElementById('unlock-btn');
+            unlockBtn.classList.remove('btn-locked');
+            unlockBtn.classList.add('btn-start');
+            unlockBtn.disabled = false;
+            unlockBtn.innerText = "✅ 我已追蹤，開始挑戰！";
+        }
+
+        // 從第一關開始遊戲
+        function startGame() {
+            resetToLevel1();
+        }
+
+        // 重置並進入第一關
+        function resetToLevel1() {
+            showPage('level1-page');
+            let level1Data =[true, true, true, true, true, false, false, false, false, false];
+            shuffleArray(level1Data);
+            renderDoors('level1-doors', level1Data, 1);
+        }
+
+        // 初始化第二關
+        function startLevel2() {
+            showPage('level2-page');
+            let level2Data =[true, false, false, false, false];
+            shuffleArray(level2Data);
+            renderDoors('level2-doors', level2Data, 2);
+        }
+
+        // 渲染門
+        function renderDoors(containerId, dataArray, level) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ''; 
+            
+            dataArray.forEach((isWin) => {
+                const door = document.createElement('div');
+                door.className = 'door';
+                door.innerHTML = '<span class="door-content">🚪</span>';
+                door.onclick = () => handleDoorClick(door, isWin, level, containerId);
+                container.appendChild(door);
+            });
+        }
+
+        // 點擊門的邏輯
+        function handleDoorClick(doorElement, isWin, level, containerId) {
+            const allDoors = document.querySelectorAll(`#${containerId} .door`);
+            allDoors.forEach(d => d.classList.add('disabled'));
+
+            doorElement.classList.add('opened');
+
+            if (isWin) {
+                doorElement.querySelector('.door-content').innerText = '🎟️';
+                setTimeout(() => {
+                    if (level === 1) {
+                        startLevel2();
+                    } else {
+                        showPage('success-page');
+                    }
+                }, 1000); 
+            } else {
+                const isWind = Math.random() > 0.5;
+                doorElement.querySelector('.door-content').innerText = isWind ? '💨' : '👤';
+                
+                setTimeout(() => {
+                    showFailPage(isWind);
+                }, 1000);
+            }
+        }
+
+        // 顯示失敗頁面
+        function showFailPage(isWind) {
+            showPage('fail-page');
+            const failTitle = document.getElementById('fail-title');
+            const failDesc = document.getElementById('fail-desc');
+            
+            if (isWind) {
+                failTitle.innerText = "💨 呼～是一陣風！";
+                failDesc.innerText = "你什麼都沒抓到，只捕獲了一陣風。";
+            } else {
+                failTitle.innerText = "👤 哎呀！是一道影！";
+                failDesc.innerText = "可惡，你只摸到了小編的影子。";
+            }
+        }
+
+        // 生成截圖憑證
+        function generateCertificate() {
+            const igAccount = document.getElementById('ig-input').value.trim();
+            const nickname = document.getElementById('nickname-input').value.trim();
+            
+            if (igAccount === '' || nickname === '') {
+                alert('請完整輸入 IG 帳號與暱稱，才能產生憑證喔！');
+                return;
+            }
+            
+            document.getElementById('display-ig').innerText = igAccount;
+            document.getElementById('display-name').innerText = nickname;
+            showPage('final-page');
+        }
+
+    </script>
+</body>
+</html>
